@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -23,12 +25,12 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
@@ -38,7 +40,6 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-
 // Set port
 const port = process.env.APP_PORT || 4000;
 
@@ -46,7 +47,5 @@ const port = process.env.APP_PORT || 4000;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
-
-let nama = 'adrian'
 
 module.exports = app;
