@@ -11,7 +11,7 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var tasksRouter = require('./routes/tasks');
-var userTaskRouter = require('./routes/usertask');
+var userTaskRouter = require('./routes/userTask');
 
 var app = express();
 
@@ -62,6 +62,5 @@ if (env === 'development') {
     console.log(`Server is running on port ${port}`);
   });
 }
-
 
 module.exports = app;

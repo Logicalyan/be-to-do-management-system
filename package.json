@@ -2,8 +2,8 @@
   "name": "be-to-do-management-system",
   "version": "0.0.0",
   "private": false,
-  "main" : "index.js",
-  "engines" : {
+  "main": "index.js",
+  "engines": {
     "node": "22.x"
   },
   "scripts": {
