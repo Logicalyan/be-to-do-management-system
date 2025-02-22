@@ -3,7 +3,7 @@ var router = express.Router();
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const bcrypt = require('bcrypt');
-const { stringify } = require('jade/lib/utils');
+const { stringify }  = require('jade/lib/utils');
 
 //Get All Users
 router.get('/get-all', async function (req, res) {
@@ -52,42 +52,47 @@ router.get('/get/:id', async function (req, res) {
 // Create User
 router.post('/create', async function (req, res) {
   const { name, email, password } = req.body;
+  
+    // Periksa apakah email sudah ada
+    const existingUser = await prisma.user.findFirst({
+      where: { email: email },
+    });
 
-  name === null
-    ? res.status(404).json({
+    if (existingUser) {
+      return res.status(400).json({
         status: 'error',
-        message: 'name fields are required',
-      })
-    : email === null
-      ? res.status(404).json({
-          status: 'error',
-          message: 'email fields are required',
-        })
-      : password === null
-        ? res.status(404).json({
-            status: 'error',
-            message: 'password fields are required',
-          })
-        : async () => {
-            const hashPassword = await bcrypt.hash(password, 10);
-            const stringPassword = await stringify(hashPassword);
-            const user = await prisma.user.create({
-              data: {
-                username: name,
-                email,
-                password: stringPassword,
-              },
-            });
-            res.send(user);
-          };
+        message: 'Email sudah digunakan di akun lain.',
+      });
+    }
+
+    // Hash password
+    const hashPassword = await bcrypt.hash(password, 10);
+    const stringPassword = stringify(hashPassword);
+
+    // Buat user baru
+    const user = await prisma.user.create({
+      data: { 
+        username: name,
+        email,
+        password: stringPassword,
+      },
+    });
+
+    // Kirim respons berhasil
+    res.status(201).json({
+      status: 'success',
+      message: 'User berhasil dibuat.',
+      data: user,
+    });
 });
+
 
 // Update User
 router.put('/update/:id', async function (req, res) {
   const { id } = req.params;
   const { name, email, password } = req.body;
   const hashPassword = await bcrypt.hash(password, 10);
-  const stringPassword = await stringify(hashPassword);
+  const stringPassword = stringify(hashPassword);
 
   if (name === '' && email === '' && password === '') {
     res.status(404).json({

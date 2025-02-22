@@ -25,6 +25,28 @@ router.get('/get-user-task/:user_id/:task_id', async function (req, res) {
   res.json(userTask);
 });
 
+//Get User Task By user_id
+router.get('/user/:user_id', async function (req, res) {
+  const { user_id } = req.params;
+  const userTask = await prisma.userTask.findMany({
+    where: {
+      user_id: parseInt(user_id),
+    },
+  });
+  res.json(userTask);
+});
+
+//Get User Task By task_id
+router.get('/task/:task_id', async function (req, res) {
+  const { task_id } = req.params;
+  const userTask = await prisma.userTask.findMany({
+    where: {
+      task_id: parseInt(task_id),
+    },
+  });
+  res.json(userTask);
+});
+
 //Create User Task
 router.post('/create', async function (req, res) {
   const { user_id, task_id } = req.body;
@@ -58,6 +80,45 @@ router.delete('/soft-delete/:id', async function (req, res) {
     data: {
       deleted_at: new Date(),
       is_deleted: true,
+    },
+  });
+  res.send(userTask);
+});
+
+//join tables
+router.get('/join', async function (req, res) {
+  const userTask = await prisma.userTask.findMany({
+    include: {
+      user: true,
+      task: true,
+    },
+  });
+  res.send(userTask);
+});
+
+router.get('/join/:id', async function (req, res) {
+  const { id } = req.params;
+  const userTask = await prisma.userTask.findMany({
+    where: {
+      task_id: parseInt(id),
+    },
+    include: {
+      user: true,
+      task: true,
+    },
+  });
+  res.send(userTask);
+});
+
+router.get('/join/user/:id', async function (req, res) {
+  const { id } = req.params;
+  const userTask = await prisma.userTask.findMany({
+    where: {
+      user_id: parseInt(id),
+    },
+    include: {
+      user: true,
+      task: true,
     },
   });
   res.send(userTask);

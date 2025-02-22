@@ -1,5 +1,7 @@
 require('dotenv').config();
 
+// var cors = require('cors');
+
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -22,6 +24,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+// app.use(cors());
 
 //initial route
 app.use('/', indexRouter);
@@ -54,9 +57,15 @@ app.use(function (err, req, res) {
 // Set port
 const port = process.env.APP_PORT || 4000;
 
-// Start server
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+//Check ENV
+const env = process.env.ENV_TYPE || 'production';
+
+if (env === 'development') {
+  // Start server
+  app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+  });
+}
+
 
 module.exports = app;
